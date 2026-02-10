@@ -26,7 +26,7 @@ function App() {
   return (
     <div className="App">
       {/* Accordian component */}
-      {/* <Accordian/> */}
+      <Accordian/>
       {/* Random color component */}
       {/* <RandomColor/> */}
 
@@ -88,7 +88,7 @@ function App() {
       {/* <ScrollToTopAndBottom/> */}
 
       {/* Scroll to a Particular Section */}
-      <ScrollToSection/>
+      {/* <ScrollToSection/> */}
     </div>
   );
 }
