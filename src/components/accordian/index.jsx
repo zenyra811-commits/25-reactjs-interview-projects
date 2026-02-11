@@ -15,17 +15,12 @@ export default function Accordian() {
   }
 
   function handleMultiSelection(getCurrentId) {
-    let cpyMutiple = [...multiple];
-    const findIndexOfCurrentId = cpyMutiple.indexOf(getCurrentId);
-
-    console.log(findIndexOfCurrentId);
-    if (findIndexOfCurrentId === -1) cpyMutiple.push(getCurrentId);
-    else cpyMutiple.splice(findIndexOfCurrentId, 1);
-
-    setMultiple(cpyMutiple);
+    // Use functional updater for safety and immutability
+    setMultiple((prev) =>
+      prev.includes(getCurrentId) ? prev.filter((x) => x !== getCurrentId) : [...prev, getCurrentId]
+    );
   }
 
-  console.log(selected, multiple);
   return (
     <div className="acc-wrapper">
       <button onClick={() => setEnableMultiSelection(!enableMultiSelection)}>
@@ -33,34 +28,31 @@ export default function Accordian() {
       </button>
       <div className="accordian">
         {data && data.length > 0 ? (
-          data.map((dataItem) => (
-            <div className="item">
-              <div
-                onClick={
-                  enableMultiSelection
-                    ? () => handleMultiSelection(dataItem.id)
-                    : () => handleSingleSelection(dataItem.id)
-                }
-                className="title"
-              >
-                <h3>{dataItem.question}</h3>
-                <span>+</span>
+          data.map((dataItem) => {
+            const isOpen = enableMultiSelection
+              ? multiple.includes(dataItem.id)
+              : selected === dataItem.id;
+
+            return (
+              <div className="item" key={dataItem.id}>
+                <div
+                  onClick={() =>
+                    enableMultiSelection
+                      ? handleMultiSelection(dataItem.id)
+                      : handleSingleSelection(dataItem.id)
+                  }
+                  className="title"
+                >
+                  <h3>{dataItem.question}</h3>
+                  <span>{isOpen ? "-" : "+"}</span>
+                </div>
+
+                {isOpen && <div className="acc-content ">{dataItem.answer}</div>}
               </div>
-              {enableMultiSelection
-                ? multiple.indexOf(dataItem.id) !== -1 && (
-                    <div className="acc-content ">{dataItem.answer}</div>
-                  )
-                : selected === dataItem.id && (
-                    <div className="acc-content ">{dataItem.answer}</div>
-                  )}
-              {/* {selected === dataItem.id ||
-              multiple.indexOf(dataItem.id) !== -1 ? (
-                <div className="content">{dataItem.answer}</div>
-              ) : null} */}
-            </div>
-          ))
+            );
+          })
         ) : (
-          <div>No data found !</div>
+          <p>Loading...</p>
         )}
       </div>
     </div>
